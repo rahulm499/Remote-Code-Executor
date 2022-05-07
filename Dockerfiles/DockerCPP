@@ -1,8 +1,10 @@
-FROM ubuntu:latest
-WORKDIR /usr/src/app
+FROM ubuntu:18.04
+LABEL maintainer="Rahul Mittal"
+
+RUN groupadd -r mittal && useradd -r -g mittal mittal
 RUN apt-get update
 RUN apt-get install build-essential -y
 
 RUN chsh -s /usr/sbin/nologin root 
-RUN groupadd -g cpp && useradd -r -g cpp cpp
 
+WORKDIR /usr/src/app
