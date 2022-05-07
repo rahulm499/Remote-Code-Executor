@@ -1,9 +1,9 @@
 #include<iostream>
 using namespace std;
 int main(){
-int a;
-cin>>a;
-a=a+1;
-cout<<a;
-return 0;
+int a=5;
+int b=10;
+int c;
+c=a;a=b;b=c;
+cout<<a<<" "<<b<<endl;
 }

@@ -1,4 +1,8 @@
-FROM ubuntu
+FROM ubuntu:latest
 WORKDIR /usr/src/app
 RUN apt-get update
 RUN apt-get install build-essential -y
+
+RUN chsh -s /usr/sbin/nologin root 
+RUN groupadd -g cpp && useradd -r -g cpp cpp
+

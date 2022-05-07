@@ -2,10 +2,12 @@ const express = require('express')
 const { generateFile }= require('./generateFile');
 const { executeCpp } = require('./executeCpp');
 const app=express();
+
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
+
 app.get('/', (req, res)=>{
-   return res.json({hello: "world"});
+   return res.json({Message: "Send the code"});
 })
 
 app.post('/run', async (req, res)=>{
@@ -14,10 +16,10 @@ app.post('/run', async (req, res)=>{
         return res.status(400).json({success: false, error: "Empty code body"})
     }
     try{
-    const filepath = await generateFile(language, code)
+    const filepath = await generateFile(language, code);
     const output = await executeCpp(filepath, input);
-    console.log(output);
-    return res.json({filepath, output});
+    //console.log(output);
+    return res.json({output});
     } catch(err){
         res.status(500).json({err: err.stderr});
     }
