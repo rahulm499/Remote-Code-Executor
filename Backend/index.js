@@ -10,7 +10,7 @@ app.use(express.json());
 
 const dockerInit = ()=>{
     return new Promise((resolve, reject)=>{
-     exec(`docker run -d -it cpp:latest /bin/bash`).then((res)=>{
+     exec(`sudo docker run -d -it cpp:latest /bin/bash`).then((res)=>{
         console.log(res.stdout);
       
         resolve(res.stdout.substring(0, 12));
@@ -18,10 +18,6 @@ const dockerInit = ()=>{
     })
 }
 
-
-app.get('/', (req, res)=>{
-   return res.json({Message: "Send the code"});
-})
 
 app.post('/run', async (req, res)=>{
     const {language="cpp", code, input}=req.body;
@@ -31,8 +27,9 @@ app.post('/run', async (req, res)=>{
     try{
     const contId=await dockerInit();
 
-    await generateFile(language, code, contId);
-    const output=await executeCpp(input, contId);
+    const jobId = await generateFile(language, code, contId);
+    const output=await executeCpp(input, contId, jobId);
+    console.log("This is output",output) 
     return res.json({output});
 
     //console.log(output);
@@ -41,8 +38,14 @@ app.post('/run', async (req, res)=>{
         res.status(500).json({err: err.stderr});
     }
 })
-
-
+app.get('/output', (req, res)=>{
+    const {file}=req.params;
+    return res.json({Message: "Send the code"});
+ })
+ app.get('/', (req, res)=>{
+    return res.json({Message: "Send the code"});
+ })
+ 
 app.listen(5000, ()=>{
     console.log("Listening to 5000")
 })

@@ -9,22 +9,22 @@ if(!fs.existsSync(outputPath)){
     fs.mkdirSync(outputPath, {recursive: true})
 }
 
-const executeCpp = (input, contId)=>{
-    return new Promise((resolve, reject)=>{
+const executeCpp = (input, contId, jobId, language)=>{
+    return new Promise(async (resolve, reject)=>{
         //const jobId = path.basename(filepath).split(".")[0];
        // const outPath = path.join(outputPath, `${jobId}.out`)
     
-        exec(`docker exec ${contId} bash -c "g++ test.cpp -o test.out && echo ${input} | ./test.out"`).then((resp)=>{
+        return await exec(`sudo docker exec ${contId} bash -c "g++ ${jobId}.cpp -o ${jobId}.out && echo ${input} | ./${jobId}.out"`).then((resp)=>{
             console.log("Execute Cpp");
-            
-            console.log(resp);
-            exec(`docker stop ${contId}`).then(()=>{
-                exec(`docker rm ${contId}`)
+            resolve(resp.stdout);
+        }).catch(err => {
+            console.log("Error Found", err);
+            reject(err)
+        }).finally(()=>{
+            exec(`sudo docker stop ${contId}`).then(()=>{
+                exec(`sudo docker rm ${contId}`)
                 console.log("Docker Removed");
             });
-            
-            resolve(resp.stdout);
-            
         });
         //exec(`g++ ${filepath} -o ${outPath} && cd ${outputPath} && echo ${input} | ./${jobId}.out`,
         //exec(`python3 ${filepath}`,
